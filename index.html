@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniAct: One Policy, One Million Embodiments</title>
+  <meta name="description" content="OmniAct is a cross-embodiment manipulation policy that conditions on each robot's kinematics in the scene. Trained across one million procedurally generated arms, it controls robots it has never seen, in simulation and on real hardware.">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OmniAct: One Policy, One Million Embodiments">
+  <meta property="og:description" content="A cross-embodiment manipulation policy grounded in each robot's kinematics, trained across one million procedurally generated arms.">
+  <meta property="og:url" content="https://omniact.github.io/">
+  <meta property="og:image" content="https://omniact.github.io/static/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="static/img/favicon.svg" type="image/svg+xml">
+  <!-- Loading order: text font and hero first, then the other images and video thumbnails, videos last (main.js). -->
+  <link rel="preload" as="font" href="static/fonts/inter-latin.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="image" href="static/img/hero-clear-3000.webp" imagesrcset="static/img/hero-clear-1600.webp 1600w, static/img/hero-clear-3000.webp 3000w" imagesizes="(max-width: 640px) 1100px, 110vw" fetchpriority="high">
+  <link rel="preload" as="image" href="static/img/wordmark.webp" type="image/webp" fetchpriority="high">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <nav class="topbar-inner" aria-label="Sections">
+    <a class="brand" href="#top">OmniAct</a>
+    <div class="navlinks">
+      <a href="#real-world">Real world</a>
+      <a href="#overview">Overview</a>
+      <a href="#method">Method</a>
+      <a href="#data">1M arms</a>
+      <a href="#results">Results</a>
+      <a href="#strategies">Strategies</a>
+      <a href="#bibtex">BibTeX</a>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ============================== HERO ============================== -->
+  <!-- The paper's gallery figure split in two layers: the arms (wordmark erased) and the figure's own "OmniAct"
+       wordmark, raised slightly so the title fits under it in the same clearing. Static: always visible, no script. -->
+  <section class="hero" id="hero">
+    <div class="hero-band">
+    <div class="hero-stage">
+      <img class="hero-img" fetchpriority="high" src="static/img/hero-clear-3000.webp" srcset="static/img/hero-clear-1600.webp 1600w, static/img/hero-clear-3000.webp 3000w" sizes="(max-width: 640px) 1100px, 110vw" width="3000" height="1320" alt="Hundreds of procedurally generated robot arms with different link shapes, colors, joint layouts and grippers, gathered around the project name.">
+      <h1 class="hero-lockup">
+        <img class="hero-wordmark" fetchpriority="high" src="static/img/wordmark.webp" width="1439" height="277" alt="OmniAct">
+        <span class="visually-hidden">: </span>
+        <span class="hero-title">One Policy, One Million Embodiments</span>
+      </h1>
+    </div>
+    </div>
+
+    <div class="wrap hero-meta">
+      <p class="lead">OmniAct <strong>zero-shot controls unseen robots</strong> on a variety of tasks with surprisingly good robustness. It takes advantage of <strong>robot-specific features</strong> to maximize its task success.</p>
+
+      <div class="authors">
+        <span>Xiang Fan<sup>1*</sup></span>
+        <span>Yuheng Wang<sup>1*</sup></span>
+        <span>Jiayuan Yan<sup>1</sup></span>
+        <span>Bohan Fang<sup>1</sup></span>
+        <span>Wisdom Oluchi Ikezogwo<sup>1</sup></span>
+        <span>Ainaz Eftekhar<sup>1</sup></span>
+        <span>Max Argus<sup>3</sup></span>
+        <span>Zhongzheng Ren<sup>1,2</sup></span>
+        <span>Jiafei Duan<sup>4</sup></span>
+        <span>Ranjay Krishna<sup>1</sup></span>
+      </div>
+      <div class="affils">
+        <div class="affil-row">
+          <span><sup>1</sup>University of Washington</span>
+          <span><sup>2</sup>University of North Carolina at Chapel Hill</span>
+        </div>
+        <div class="affil-row">
+          <span><sup>3</sup>Allen Institute for Artificial Intelligence</span>
+          <span><sup>4</sup>National University of Singapore</span>
+        </div>
+      </div>
+      <p class="equal"><sup>*</sup>Equal contribution</p>
+
+      <!-- Code / Data: replace href="#" and remove aria-disabled and the "soon" tag once each is public. -->
+      <div class="buttons">
+        <a class="btn" href="https://arxiv.org/abs/2611.33158"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2v6h6M9 13h8M9 17h8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Paper</a>
+        <a class="btn" href="#" aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Code<span class="soon">soon</span></a>
+        <a class="btn" href="#" aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Data<span class="soon">soon</span></a>
+        <a class="btn" href="#real-world"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 10l5-3v10l-5-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Videos</a>
+        <a class="btn" href="#bibtex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7H4v6h4v4H5M17 7h-3v6h4v4h-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>BibTeX</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== REAL WORLD =========================== -->
+  <section id="real-world" class="section alt">
+    <div class="wrap">
+      <p class="eyebrow">Real robots</p>
+      <h2>Zero-shot on physical arms</h2>
+      <p class="intro">We deploy OmniAct without fine-tuning on a Franka Panda, the robot every baseline was trained on, and on an OpenYAM arm with a fine-tip flange gripper that no policy has seen. Each robot gets 20 pick-and-place setups, and in every setup all policies start from the same object positions.</p>
+
+      <div class="table-wrap">
+        <table class="real-table">
+          <thead><tr><th>Model</th><th>Franka</th><th>OpenYAM</th><th class="overall">Overall</th><th>Params</th></tr></thead>
+          <tbody>
+            <tr class="caption-row"><td colspan="5">Some or all target embodiments seen in training</td></tr>
+            <tr><td>MolmoBot</td><td>8/20</td><td><span class="ns" title="Fails or behaves unsafely on every attempt: no support for this embodiment">N/S</span></td><td class="overall"><span class="pct">20%</span><span class="bar" style="--v:20"></span></td><td>4B</td></tr>
+            <tr><td>LAP-3B</td><td>8/20</td><td>0/20</td><td class="overall"><span class="pct">20%</span><span class="bar" style="--v:20"></span></td><td>3B</td></tr>
+            <tr><td>&pi;<sub>0.5</sub></td><td>13/20</td><td><span class="ns" title="Fails or behaves unsafely on every attempt: no support for this embodiment">N/S</span></td><td class="overall"><span class="pct">33%</span><span class="bar" style="--v:33"></span></td><td>3B</td></tr>
+            <tr><td>DreamZero</td><td><b>15/20</b></td><td><span class="ns" title="Fails or behaves unsafely on every attempt: no support for this embodiment">N/S</span></td><td class="overall"><span class="pct">38%</span><span class="bar" style="--v:38"></span></td><td>14B</td></tr>
+            <tr><td>MolmoAct2<sup>&dagger;</sup></td><td>14/20</td><td>7/20</td><td class="overall"><span class="pct">53%</span><span class="bar" style="--v:53"></span></td><td>5B</td></tr>
+            <tr class="caption-row"><td colspan="5">No target embodiment seen in training</td></tr>
+            <tr><td>UMI</td><td>1/20</td><td>0/20</td><td class="overall"><span class="pct">3%</span><span class="bar" style="--v:3"></span></td><td>0.6B</td></tr>
+            <tr><td>UMI-on-Air</td><td>1/20</td><td>0/20</td><td class="overall"><span class="pct">3%</span><span class="bar" style="--v:3"></span></td><td>0.6B</td></tr>
+            <tr><td>UMI (all views)</td><td>11/20</td><td>0/20</td><td class="overall"><span class="pct">28%</span><span class="bar" style="--v:28"></span></td><td>0.6B</td></tr>
+            <tr class="ours"><td>OmniAct</td><td>14/20</td><td><b>13/20</b></td><td class="overall"><span class="pct"><b>68%</b></span><span class="bar" style="--v:68"></span></td><td>0.4B</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><sup>&dagger;</sup>MolmoAct2 runs its DROID model on Franka and its BimanualYAM model on OpenYAM. N/S: the model fails or behaves unsafely on every attempt because it does not support the embodiment. UMI (all views) is trained on the same simulated data as OmniAct but without the scene-grounded kinematic graph.</p>
+
+      <!-- OpenYAM -->
+      <div class="block">
+        <div class="block-head">
+          <h3>OpenYAM: an arm at the edge of the training distribution</h3>
+          <p>OpenYAM's reach, mass, stiffness and force limits all sit near or beyond the 5th percentile of the training corpus, and its gripper never appears in training. Each clip shows the side, waist and wrist cameras, with the robot's kinematic graph drawn on top. Clips are sped up about 3&ndash;4&times;.</p>
+        </div>
+        <div class="player">
+          <div class="player-video">
+            <video id="yam-video" muted loop playsinline controls preload="none" poster="static/video/openyam/five.webp">
+              <source src="static/video/openyam/five.mp4" type="video/mp4">
+            </video>
+            <div class="cam-labels" aria-hidden="true"><span>Side</span><span>Waist</span><span>Wrist</span></div>
+          </div>
+          <p class="player-caption" id="yam-caption"></p>
+          <div class="clip-groups" id="yam-clips"></div>
+        </div>
+        <figure class="figure paper compact narrow">
+          <a class="zoom" href="static/img/arm_ranges.webp" target="_blank" rel="noopener" title="Open full size"><img src="static/img/arm_ranges.webp" width="1392" height="704" fetchpriority="low" decoding="async" alt="Percentile of each real-world arm within the training corpus for reach, arm mass, joint stiffness, damping, armature, force limit and stiffness-to-inertia ratio; OpenYAM lies at the low edge for most quantities, Franka is mostly in distribution."></a>
+          <figcaption>Percentile of each real arm within the training corpus, per physical quantity. OpenYAM sits at the edge of the distribution; Franka is partly in distribution and partly at the edge.</figcaption>
+        </figure>
+      </div>
+
+      <!-- Franka -->
+      <div class="block">
+        <div class="block-head">
+          <h3>Franka: every policy, same setup</h3>
+          <p>Pick a setup to watch all nine policies from the same starting layout. Clips show the right exterior and the wrist cameras. UMI and UMI-on-Air observe only the wrist camera.</p>
+        </div>
+        <div class="setups" id="setups" role="tablist" aria-label="Franka setups"></div>
+        <p class="setup-title" id="setup-title"></p>
+        <div class="vgrid" id="franka-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ OVERVIEW ============================ -->
+  <section id="overview" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Overview</p>
+      <h2>Embodiment-native control, at the scale of a million bodies</h2>
+      <figure class="figure paper">
+        <a class="zoom" href="static/img/teaser.webp" target="_blank" rel="noopener" title="Open full size"><img src="static/img/teaser.webp" srcset="static/img/teaser-1200.webp 1200w, static/img/teaser.webp 2400w" sizes="(max-width: 1140px) 100vw, 1100px" width="2400" height="1301" fetchpriority="low" decoding="async" alt="Overview figure: (1) generated 6-, 7- and 8-DoF embodiments and grippers; (2) successful simulated trajectories; (3) the OmniAct policy maps robot nodes to per-node actions and end-effector poses; (4) simulation results; (5) zero-shot transfer to real arms."></a>
+        <figcaption>We (1) generate diverse embodiments procedurally, (2) keep their successful simulated trajectories, and (3) train a single policy, OmniAct, on all of them. (4, 5) In simulation and on real robots, OmniAct outperforms the baselines zero-shot, on embodiments the baselines were trained on and on embodiments no policy has seen.</figcaption>
+      </figure>
+
+      <div class="abstract">
+        <h3>Abstract</h3>
+        <p>A single policy that controls diverse robots must not only transfer task knowledge across embodiments, but also adapt its behavior to each robot's capabilities. Existing approaches facilitate transfer through shared action representations, but these representations do not necessarily capture how differences in robot morphology should shape manipulation strategies. We introduce OmniAct, a <em>cross-embodiment</em> manipulation policy that conditions directly on each robot's <em>kinematics in a specific scene</em> to produce embodiment-specific behavior. This kinematic graph represents the robot's joint positions, motion axes, and connectivity to its visual observation, allowing the policy to account for how its embodiment relates to objects and surfaces in the scene. A flow-matching policy predicts relative joint motions for each node, enabling control across robots with different degrees of freedom and kinematic configurations. To learn how physical structure shapes behavior at scale, we procedurally design and filter one million physically feasible robot embodiments; next, we develop algorithms to generate robot trajectories in simulation for all embodiments; finally, we train across diverse simulated manipulation tasks. On 2,000 embodiment-scene-held-out evaluation episodes, OmniAct achieves 63.0% success, compared to 17.8% for &pi;<sub>0.5</sub> and 57.9% for the strongest baseline; on the task families GPT-6 Astra was evaluated on, it achieves 64.7% against 41.1%. On a previously unseen real-world robot, it achieves nearly twice the success rate of the next best method, MolmoAct2. Beyond task success, we observe that OmniAct learns distinct manipulation strategies that exploit the capabilities and accommodate the limitations of different morphologies.</p>
+      </div>
+
+      <div class="stats" role="list">
+        <div class="stat" role="listitem">
+          <div class="stat-value">1M</div>
+          <div class="stat-label">procedurally generated arms, screened for self-collision and grasp feasibility</div>
+        </div>
+        <div class="stat" role="listitem">
+          <div class="stat-value">63.0%</div>
+          <div class="stat-label">success on unseen arms in unseen scenes; the strongest baseline reaches 57.9%</div>
+        </div>
+        <div class="stat" role="listitem">
+          <div class="stat-value">69.1%</div>
+          <div class="stat-label">on MolmoSpaces with a Franka that OmniAct never trained on; MolmoBot, trained for it, reaches 63.0%</div>
+        </div>
+        <div class="stat" role="listitem">
+          <div class="stat-value">13/20</div>
+          <div class="stat-label">zero-shot on a real OpenYAM with an unseen gripper; the next best policy completes 7</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= METHOD ============================= -->
+  <section id="method" class="section alt">
+    <div class="wrap">
+      <p class="eyebrow">Method</p>
+      <h2>The robot enters the policy as itself</h2>
+      <p class="intro">Instead of reducing every robot to a shared end-effector interface, OmniAct describes each robot by its own kinematic graph, placed in the coordinate frames of the cameras that observe it, and predicts motion for every joint of that graph.</p>
+      <figure class="figure paper">
+        <a class="zoom" href="static/img/arch.webp" target="_blank" rel="noopener" title="Open full size"><img src="static/img/arch.webp" width="2000" height="1115" fetchpriority="low" decoding="async" alt="Architecture: multi-view RGB observations, a scene-grounded kinematic graph with one token per joint node and camera view, proprioception, and text are processed by diffusion transformers that output per-node joint actions and an end-effector pose."></a>
+        <figcaption>Multi-view RGB observations, the language instruction, and the camera-frame kinematic graph condition a shared flow-matching Transformer. Each node is a joint or annotated point of the robot, encoding its geometric and proprioceptive state in each camera frame. The policy jointly predicts relative joint motions and end-effector poses.</figcaption>
+      </figure>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-num">1</div>
+          <h3>Scene-grounded kinematic graph</h3>
+          <p>Every joint, gripper driver, fingertip and the tool center point becomes a node. Forward kinematics and camera extrinsics place each node's center, motion axis and pose in the 3D frame of every observing camera, and each node token shares that camera's view embedding with its image tokens.</p>
+        </article>
+        <article class="card">
+          <div class="card-num">2</div>
+          <h3>Variable-DoF actions</h3>
+          <p>Nodes are ordered along the kinematic chain and left-padded to a fixed 12-slot layout, end effector last. A 400M-parameter flow-matching Transformer predicts a relative motion for every node and end-effector pose updates, so one network drives 6-, 7- and 8-DoF arms with revolute and prismatic joints.</p>
+        </article>
+        <article class="card">
+          <div class="card-num">3</div>
+          <h3>Experience from a million bodies</h3>
+          <p>Each arm is a deterministic function of a seed: morphology, joint limits, actuator dynamics, link geometry, inertia and appearance. Arms that collide with themselves or cannot reach a grasp are screened out, and a planner generates trajectories in MolmoSpaces using only motions each arm can execute.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== DATA ============================== -->
+  <section id="data" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Data</p>
+      <h2>One million embodiments</h2>
+      <p class="intro">Arms vary in degrees of freedom, twist pattern, link geometry and length, joint ranges, stiffness and damping, gripper family and mount. Because every trajectory is one its own body could execute, the data does not commit to a single canonical grasp: depending on the arm and the object, successful grasps come from above, from the side, or in between.</p>
+
+      <div class="corpus" role="list">
+        <div role="listitem"><strong>1,029,605</strong><span>trajectories</span></div>
+        <div role="listitem"><strong>800,196</strong><span>embodiments with a successful trajectory</span></div>
+        <div role="listitem"><strong>150.4M</strong><span>frames</span></div>
+        <div role="listitem"><strong>2,740 h</strong><span>of manipulation</span></div>
+        <div role="listitem"><strong>6</strong><span>task families: pick, open, close, pick-and-place, by color, next to</span></div>
+      </div>
+
+      <div class="gallery">
+        <div class="gallery-head">
+          <div>
+            <h3>A random sample of arms and their trajectories</h3>
+            <p class="muted">Each row is one generated embodiment: the arm at rest, then six frames evenly spaced over one of its training trajectories.</p>
+          </div>
+          <button class="btn small" id="shuffle" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h3.5c2 0 3.2.9 4.3 2.6l2.4 3.8c1.1 1.7 2.3 2.6 4.3 2.6H21M3 17h3.5c2 0 3.2-.9 4.3-2.6M13.2 9.6C14.3 7.9 15.5 7 17.5 7H21M18 4l3 3-3 3M18 14l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Show other arms</button>
+        </div>
+        <div class="gallery-rows" id="gallery-rows" aria-live="polite"></div>
+      </div>
+
+      <div class="chips" aria-label="Embodiment properties">
+        <span>70.5% mix two or more link sources</span>
+        <span>65.1% have a forearm roll</span>
+        <span>49.6% use prismatic gripper drivers</span>
+        <span>44.2% contain a universal joint</span>
+        <span>28.4% of joints move only one way</span>
+        <span>10.0% have three parallel axes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RESULTS ============================= -->
+  <section id="results" class="section alt">
+    <div class="wrap">
+      <p class="eyebrow">Results in simulation</p>
+      <h2>Generalizing to arms no policy has seen</h2>
+      <p class="intro">OmniAct-Bench holds out 5% of embodiments and 5% of scenes per task from training; every episode below pairs an unseen arm with an unseen scene. Success on 2,000 sampled episodes with a 500-step cap, all six task families.</p>
+
+      <div class="chart" id="chart-bench" data-unit="%" data-max="100" aria-label="Success rate on OmniAct-Bench, all tasks, 500 steps"></div>
+      <p class="note">GPT-6 Astra (max thinking) was run on the Pick, PnP and Open families only. On those families OmniAct reaches 64.7%, against 41.1% for GPT-6 Astra at the same 500-step budget and 54.8% with twice the budget.</p>
+
+      <details class="table-details">
+        <summary>Full table: success by task family (mean ± s.e.)</summary>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Steps</th><th>Pick</th><th>PnP</th><th>PnPN</th><th>PnPC</th><th>Open</th><th>Close</th><th>Common</th><th>All</th></tr></thead>
+            <tbody>
+              <tr><td>MolmoAct2-YAM</td><td>500</td><td>0.2<i>±0.2</i></td><td>2.9<i>±1.0</i></td><td>0.0<i>±0.0</i></td><td>0.8<i>±0.6</i></td><td>3.0<i>±0.8</i></td><td>20.7<i>±2.3</i></td><td>1.8<i>±0.4</i></td><td>4.4<i>±0.5</i></td></tr>
+              <tr><td>DreamZero-DROID</td><td>500</td><td>0.7<i>±0.4</i></td><td>2.5<i>±0.9</i></td><td>1.6<i>±0.9</i></td><td>1.6<i>±0.8</i></td><td>13.4<i>±1.6</i></td><td>40.3<i>±2.8</i></td><td>5.5<i>±0.6</i></td><td>10.0<i>±0.7</i></td></tr>
+              <tr><td>MolmoAct2-DROID</td><td>500</td><td>1.5<i>±0.5</i></td><td>2.9<i>±1.0</i></td><td>2.6<i>±1.2</i></td><td>2.0<i>±0.9</i></td><td>19.4<i>±1.9</i></td><td>60.0<i>±2.8</i></td><td>8.0<i>±0.8</i></td><td>14.7<i>±0.8</i></td></tr>
+              <tr><td>&pi;<sub>0.5</sub>-DROID</td><td>500</td><td>1.9<i>±0.6</i></td><td>5.1<i>±1.3</i></td><td>6.3<i>±1.8</i></td><td>2.7<i>±1.0</i></td><td>23.6<i>±2.0</i></td><td>69.2<i>±2.6</i></td><td>10.1<i>±0.9</i></td><td>17.8<i>±0.9</i></td></tr>
+              <tr><td>UMI</td><td>500</td><td>23.4<i>±1.8</i></td><td>7.6<i>±1.6</i></td><td>6.8<i>±1.8</i></td><td>6.7<i>±1.6</i></td><td>24.5<i>±2.1</i></td><td>45.2<i>±2.9</i></td><td>20.3<i>±1.1</i></td><td>21.1<i>±0.9</i></td></tr>
+              <tr><td>UMI-on-Air</td><td>500</td><td>24.9<i>±1.9</i></td><td>7.6<i>±1.6</i></td><td>9.4<i>±2.1</i></td><td>6.3<i>±1.5</i></td><td>24.1<i>±2.1</i></td><td>44.3<i>±2.8</i></td><td>20.8<i>±1.1</i></td><td>21.4<i>±0.9</i></td></tr>
+              <tr><td>UMI (all views)</td><td>500</td><td>65.4<i>±2.1</i></td><td>48.7<i>±3.0</i></td><td>39.8<i>±3.5</i></td><td>47.5<i>±3.1</i></td><td>60.6<i>±2.4</i></td><td>68.9<i>±2.7</i></td><td>60.1<i>±1.4</i></td><td>57.9<i>±1.1</i></td></tr>
+              <tr class="group"><td>GPT-6 Astra</td><td>200</td><td>6.9<i>±4.7</i></td><td>0.0<i>±0.0</i></td><td>&ndash;</td><td>&ndash;</td><td>17.2<i>±7.0</i></td><td>&ndash;</td><td>9.6<i>±3.4</i></td><td>9.6<i>±3.4</i></td></tr>
+              <tr><td>GPT-6 Astra</td><td>500</td><td>44.8<i>±9.2</i></td><td>26.7<i>±11.4</i></td><td>&ndash;</td><td>&ndash;</td><td>44.8<i>±9.2</i></td><td>&ndash;</td><td>41.1<i>±5.8</i></td><td>41.1<i>±5.8</i></td></tr>
+              <tr><td>GPT-6 Astra</td><td>1000</td><td>48.3<i>±9.3</i></td><td>46.7<i>±12.9</i></td><td>&ndash;</td><td>&ndash;</td><td>65.5<i>±8.8</i></td><td>&ndash;</td><td>54.8<i>±5.8</i></td><td>54.8<i>±5.8</i></td></tr>
+              <tr class="group ours"><td>OmniAct</td><td>200</td><td>58.7<i>±2.1</i></td><td>22.0<i>±2.5</i></td><td>20.9<i>±2.9</i></td><td>22.7<i>±2.6</i></td><td>39.4<i>±2.4</i></td><td>56.7<i>±2.8</i></td><td>43.9<i>±1.4</i></td><td>40.9<i>±1.1</i></td></tr>
+              <tr class="ours"><td>OmniAct</td><td>500</td><td><b>70.4</b><i>±2.0</i></td><td><b>59.6</b><i>±2.9</i></td><td><b>48.7</b><i>±3.6</i></td><td><b>54.5</b><i>±3.1</i></td><td><b>60.9</b><i>±2.3</i></td><td><b>71.8</b><i>±2.6</i></td><td><b>64.7</b><i>±1.4</i></td><td><b>63.0</b><i>±1.1</i></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="note">PnP, PnPN and PnPC: pick-and-place, pick-and-place next to a reference object, and pick-and-place by color. Common aggregates the task families available for every evaluated model. GPT-6 Astra replans every five steps under a budget of 200 model calls; its 200- and 500-step rows truncate the same 1,000-step episodes.</p>
+      </details>
+
+      <div class="split">
+        <div>
+          <h3>On a robot every baseline trained on</h3>
+          <p>The MolmoSpaces benchmark uses a Franka Panda in the DROID configuration. Every baseline saw this robot in training; OmniAct did not. Success on 2,622 held-out episodes with a 500-step cap.</p>
+          <div class="chart" id="chart-franka" data-unit="%" data-max="100" aria-label="Success rate on MolmoSpaces with Franka, full scenes"></div>
+          <details class="table-details">
+            <summary>Full table: success by task family (mean ± s.e.)</summary>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Model</th><th>Pick</th><th>PnP</th><th>PnPC</th><th>PnPN</th><th>Open</th><th>Close</th><th>All</th></tr></thead>
+                <tbody>
+                  <tr><td>&pi;<sub>0.5</sub>-DROID</td><td>29.5<i>±1.8</i></td><td>17.2<i>±1.7</i></td><td>14.1<i>±1.8</i></td><td>16.0<i>±2.1</i></td><td>43.1<i>±2.1</i></td><td>73.4<i>±2.8</i></td><td>28.2<i>±0.9</i></td></tr>
+                  <tr><td>DreamZero-DROID</td><td>5.9<i>±0.9</i></td><td>2.1<i>±0.7</i></td><td>2.5<i>±0.8</i></td><td>3.0<i>±1.0</i></td><td>20.5<i>±1.7</i></td><td>66.3<i>±3.0</i></td><td>13.2<i>±0.7</i></td></tr>
+                  <tr><td>MolmoAct2-DROID</td><td>27.4<i>±1.8</i></td><td>18.6<i>±1.8</i></td><td>10.4<i>±1.5</i></td><td>12.8<i>±1.9</i></td><td>19.0<i>±1.7</i></td><td><b>76.3</b><i>±2.7</i></td><td>22.5<i>±0.8</i></td></tr>
+                  <tr><td>MolmoBot</td><td><b>90.4</b><i>±1.2</i></td><td>78.9<i>±1.9</i></td><td>78.7<i>±2.1</i></td><td>42.4<i>±2.8</i></td><td>18.3<i>±1.6</i></td><td>61.1<i>±3.1</i></td><td>63.0<i>±0.9</i></td></tr>
+                  <tr class="ours"><td>OmniAct</td><td>89.2<i>±1.2</i></td><td><b>79.3</b><i>±1.9</i></td><td><b>79.2</b><i>±2.0</i></td><td><b>57.9</b><i>±2.8</i></td><td><b>43.2</b><i>±2.1</i></td><td>52.8<i>±3.1</i></td><td><b>69.1</b><i>±0.9</i></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+        <div>
+          <h3>More bodies, better generalization</h3>
+          <p>Training on one half and one eighth of the embodiments, with the architecture and schedule fixed, lowers success on held-out arms by 6.5 and 26.8 points at the 500-step cap.</p>
+          <figure class="figure paper compact">
+            <a class="zoom" href="static/img/scaling.webp" target="_blank" rel="noopener" title="Open full size"><img src="static/img/scaling.webp" width="1384" height="672" fetchpriority="low" decoding="async" alt="Line chart: success on held-out episodes rises as the training set grows from one eighth to one half to all embodiments, at 200, 300 and 500 rollout steps; at 500 steps it rises from about 36% to 56% to 63%."></a>
+            <figcaption>Success on held-out OmniAct-Bench episodes against the fraction of training embodiments, at each rollout step cap.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== STRATEGIES =========================== -->
+  <section id="strategies" class="section">
+    <div class="wrap">
+      <p class="eyebrow">Behavior</p>
+      <h2>Different bodies, different strategies</h2>
+      <p class="intro">OmniAct does not retarget one canonical grasp across bodies. It picks the grasp the object calls for, and the approach its own arm can execute.</p>
+
+      <div class="duo">
+        <figure class="figure">
+          <div class="pair">
+            <img src="static/img/motion_yam_cube.webp" width="1000" height="750" fetchpriority="low" decoding="async" alt="OpenYAM grasping a green cube from directly above.">
+            <img src="static/img/motion_yam_knife.webp" width="1000" height="750" fetchpriority="low" decoding="async" alt="OpenYAM with its gripper level with the table, grasping a flat knife from the side.">
+          </div>
+          <figcaption><b>Same arm, different tasks.</b> On OpenYAM, OmniAct approaches the cube from above. For the knife, which lies flat on the table, it pitches the wrist until the gripper is level with the table and closes on the blade from the side.</figcaption>
+        </figure>
+        <figure class="figure">
+          <div class="pair">
+            <img src="static/img/motion_yam_cube2.webp" width="1000" height="750" fetchpriority="low" decoding="async" alt="OpenYAM grasping a cube placed far away, from above.">
+            <img src="static/img/motion_lite6_cube.webp" width="1000" height="750" fetchpriority="low" decoding="async" alt="A Lite6 arm reaching a cube at the edge of its reach with the gripper lying close to the table.">
+          </div>
+          <figcaption><b>Same task, different arms.</b> With the cube at the edge of the short-reach Lite6's workspace, OmniAct approaches from the side with the gripper about 20&deg; from the table. OpenYAM reaches the same spot easily and approaches from the top.</figcaption>
+        </figure>
+      </div>
+
+      <div class="split behavior">
+        <div>
+          <h3>The policy follows its own arm, not the scene</h3>
+          <p>In the training data, different arms handle the same object in the same scene differently. Knowing the scene barely predicts from which side an arm arrives or how it orients its jaws. The trained policy keeps this. On scenes attempted by several unseen arms, a rollout approaches from the same side as its own arm's planner demonstration in 74% of cases, but as another arm's in only 31%, close to the 25% of a random choice. It orients its jaws like its own arm's demonstration in 52% of cases, against 23%.</p>
+        </div>
+        <figure class="figure paper compact">
+          <a class="zoom" href="static/img/behavior.webp" target="_blank" rel="noopener" title="Open full size"><img src="static/img/behavior.webp" width="1800" height="1218" fetchpriority="low" decoding="async" alt="Top view of one Pick scene in which different arms approach the object from all four sides and grasp it with all four jaw orientations, and a bar chart showing that about two thirds of arm pairs on the same scene choose differently."></a>
+          <figcaption>On one Pick scene, different arms reach the object from all four sides and with all four jaw orientations. Over all scenes shared by at least ten arms, about two thirds of arm pairs choose differently.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= BIBTEX ============================= -->
+  <section id="bibtex" class="section alt">
+    <div class="wrap">
+      <p class="eyebrow">Citation</p>
+      <h2>BibTeX</h2>
+      <div class="bib">
+        <button class="btn small copy" id="copy-bib" type="button">Copy</button>
+<pre><code id="bib-text">@misc{fan2026omniactpolicymillionembodiments,
+      title={OmniAct: One Policy, One Million Embodiments},
+      author={Xiang Fan and Yuheng Wang and Jiayuan Yan and Bohan Fang and Wisdom Oluchi Ikezogwo and Ainaz Eftekhar and Max Argus and Zhongzheng Ren and Jiafei Duan and Ranjay Krishna},
+      year={2026},
+      eprint={2611.33158},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2611.33158},
+}</code></pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Contact: <a href="mailto:xiangfan@cs.washington.edu">xiangfan@cs.washington.edu</a></p>
+  </div>
+</footer>
+
+<script src="static/js/main.js"></script>
+</body>
+</html>
