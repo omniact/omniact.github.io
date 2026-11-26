@@ -12,7 +12,9 @@
   <meta property="og:url" content="https://omniact.github.io/">
   <meta property="og:image" content="https://omniact.github.io/static/img/og.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="static/img/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="static/img/favicon-32-dark.png" type="image/png" sizes="32x32" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="static/img/apple-touch-icon.png">
   <!-- Loading order: text font and hero first, then the other images and video thumbnails, videos last (main.js). -->
   <link rel="preload" as="font" href="static/fonts/inter-latin.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="image" href="static/img/hero-clear-3000.webp" imagesrcset="static/img/hero-clear-1600.webp 1600w, static/img/hero-clear-3000.webp 3000w" imagesizes="(max-width: 640px) 1100px, 110vw" fetchpriority="high">
@@ -23,7 +25,7 @@
 
 <header class="topbar">
   <nav class="topbar-inner" aria-label="Sections">
-    <a class="brand" href="#top">OmniAct</a>
+    <a class="brand" href="#top" aria-label="OmniAct"><picture><source srcset="static/img/logo-o-dark.webp" media="(prefers-color-scheme: dark)"><img class="brand-o" src="static/img/logo-o.webp" width="96" height="96" alt=""></picture>mniAct</a>
     <div class="navlinks">
       <a href="#real-world">Real world</a>
       <a href="#overview">Overview</a>

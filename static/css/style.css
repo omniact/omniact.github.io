@@ -115,7 +115,13 @@ sup { font-size: .68em; line-height: 0; }
   max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter);
   height: 56px; display: flex; align-items: center; gap: 28px;
 }
-.brand { font-weight: 800; letter-spacing: -.01em; color: var(--ink); font-size: 1.05rem; }
+.brand { font-weight: 800; letter-spacing: -.01em; color: var(--ink); font-size: 1.05rem; white-space: nowrap; flex: none; }
+/* The "O" is an embodiment from the corpus (gen_210058030) curled into a ring: joints 1.919, 0.0389, 1.6492, 0.9516,
+   -0.879, 0.1367, 1.7933, 0.8438 rad, links 1.55x thicker and untapered, its green recoloured to match the text
+   (wordmark teal #0a3235 in the hero, #0f172a / #e8edf5 here), viewed 5.2/6.6 deg off the ring normal and rolled
+   15.7 deg -- the pose and view whose rendered silhouette best covers the wordmark's own letter O (IoU 0.78).
+   The image is cropped to the arm and sized like Inter 800's O: 0.747em tall, 0.0098em below the baseline. */
+.brand-o { display: inline-block; height: .747em; width: auto; vertical-align: -.0098em; margin: 0 .04em; }
 .brand:hover { text-decoration: none; }
 .navlinks { display: flex; gap: 22px; overflow-x: auto; scrollbar-width: none; margin-left: auto; }
 .navlinks::-webkit-scrollbar { display: none; }
